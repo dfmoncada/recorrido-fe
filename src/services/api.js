@@ -13,7 +13,10 @@ async function getRoutes() {
 }
 
 async function getTrips(params) {
-  const result = await fetch('/trips', params)
+  const date = params.date && params.date
+    .toISOString()
+    .substring(0,10)
+  const result = await fetch('/trips', {...params, date})
 
   return result
 }

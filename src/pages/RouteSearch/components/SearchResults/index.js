@@ -1,5 +1,7 @@
-import React, {useState, useEffect} from 'react'
-import { getTrips } from 'services/api
+import React, {useState} from 'react'
+import { getTrips } from 'services/api'
+import {Button} from '@material-ui/core'
+import useStyles from './styles'
 
 function useSearchResults(params) {
   const [trips, setTrips] = useState([])
@@ -16,4 +18,27 @@ function useSearchResults(params) {
   }
 }
 
-export default useSearchResults
+function SearchResult({filters}) {
+  const {trips, handleUpdate} = useSearchResults(filters)
+  const classes = useStyles()
+
+  return (
+    <>
+      <Button
+        onClick={handleUpdate}
+        className={classes.button}
+      >
+        Actualizar
+      </Button>
+      {(trips.length !== 0) ? (
+        <>
+          {trips.map(t => `${t.time}: ${t.status}`).join(', ')}
+        </>
+      ) : (
+        <div>Haga una busqueda</div>
+      )}
+    </>
+  )
+}
+
+export default SearchResult

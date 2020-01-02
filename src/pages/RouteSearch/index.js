@@ -10,6 +10,7 @@ import {
     KeyboardDatePicker,
 } from '@material-ui/pickers'
 import onChangeAdapter from 'utils/onChangeAdapter'
+import SearchResult from './components/SearchResults'
 
 import useRoutes from './useRoutes'
 import useStyles from './styles'
@@ -21,7 +22,7 @@ const emptyOption = {
 const initialParams = {
   date: new Date(Date.now() - 86400000),
   routeId: 0,
-  plate: '',
+  plate: null,
 }
 
 export default function RouteSearch() {
@@ -34,7 +35,9 @@ export default function RouteSearch() {
   return (
     <>
       <ButtonAppBar filters={filters} onChange={onChange}/>
-      <div className={classes.container}>{/* CONTENT */}</div>
+      <div className={classes.container}>
+        <SearchResult filters={filters} />
+      </div>
     </>
   )
 }
@@ -80,7 +83,7 @@ function ButtonAppBar({filters, onChange}) {
               <TextField
                 label="Patente"
                 name="plate"
-                value={filters.plate}
+                value={filters.plate || ""}
                 onChange={onChange}
               />
             </Grid>
