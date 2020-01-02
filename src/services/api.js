@@ -2,10 +2,8 @@ import axios from 'axios'
 
 const BASE_URL = 'http://localhost:3000'
 
-async function fetch(route, params) {
-  const string_params = params || "" //setup params translate
-
-  return await axios.get(`${BASE_URL}${route}?${string_params}`)
+async function fetch(route, params = {}) {
+  return await axios.get(`${BASE_URL}${route}`, {params})
 }
 
 async function getRoutes() {
@@ -14,6 +12,13 @@ async function getRoutes() {
   return result
 }
 
+async function getTrips(params) {
+  const result = await fetch('/trips', params)
+
+  return result
+}
+
 export {
   getRoutes,
+  getTrips,
 }

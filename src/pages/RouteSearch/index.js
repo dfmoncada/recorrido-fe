@@ -1,47 +1,92 @@
-import React from 'react'
-import useRoutes from './useRoutes'
+import React, {useState} from 'react'
+import DateFnsUtils from '@date-io/date-fns';
+
+import Grid from '@material-ui/core/Grid'
 import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
-import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
+import {
+    MuiPickersUtilsProvider,
+    KeyboardDatePicker,
+} from '@material-ui/pickers'
+import onChangeAdapter from 'utils/onChangeAdapter'
+
+import useRoutes from './useRoutes'
 import useStyles from './styles'
 
+const emptyOption = {
+  id: 0,
+  name: 'Elija una opcion'
+}
+const initialParams = {
+  date: new Date(Date.now() - 86400000),
+  routeId: 0,
+  plate: '',
+}
 
-function ButtonAppBar() {
+export default function RouteSearch() {
+  const classes = useStyles()
+  const [filters, setFilters] = useState(initialParams)
+  const onChange = ({target: {name, value}}) => {
+    setFilters(state => ({...state, [name]: value}))
+  }
+
+  return (
+    <>
+      <ButtonAppBar filters={filters} onChange={onChange}/>
+      <div className={classes.container}>{/* CONTENT */}</div>
+    </>
+  )
+}
+function ButtonAppBar({filters, onChange}) {
   const { routes } = useRoutes()
   const classes = useStyles()
 
   return (
-    <div>
-      <AppBar
-        className={classes.appBar}
-        position="static"
-      >
-        <TextField
-          className={classes.input}
-          label="Rutas"
-          select
-        >
-          {routes.map(option => (
-            <MenuItem key={option.id} value={option.id}>
-              {option.name}
-            </MenuItem>
-          ))}
-        </TextField>
-      </AppBar>
-    </div>
-  );
-}
-
-export default function RouteSearch() {
-  return (
-    <>
-      <ButtonAppBar />
-      <div>route search placeholder</div>
+    <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <div>
+        <AppBar
+          className={classes.appBar}
+          position="static"
+        >
+          <Grid container className={classes.container}>
+            <Grid item xs={4}>
+              <TextField
+                className={classes.input}
+                label="Ruta"
+                name='routeId'
+                value={filters.routeId}
+                onChange={onChange}
+                select
+              >
+                {[emptyOption, ...routes].map(option => (
+                  <MenuItem key={option.id} value={option.id}>
+                    {option.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={4}>
+              <KeyboardDatePicker
+                className={classes.input}
+                variant="inline"
+                label="Fecha"
+                name="date"
+                value={filters.date}
+                onChange={onChangeAdapter(onChange, 'date')}
+              />
+            </Grid>
+            <Grid>
+              <TextField
+                label="Patente"
+                name="plate"
+                value={filters.plate}
+                onChange={onChange}
+              />
+            </Grid>
+          </Grid>
+        </AppBar>
       </div>
-    </>
+    </MuiPickersUtilsProvider>
   )
 }

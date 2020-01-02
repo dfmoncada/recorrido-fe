@@ -8,6 +8,10 @@ const useStyles = makeStyles({
     backgroundColor: 'CornflowerBlue',
     padding: '1rem',
   },
+  container: {
+    width: '800px',
+    margin: 'auto'
+  }
 })
 
 export default useStyles
