@@ -1,7 +1,5 @@
 import React, {useState} from 'react'
-import { getTrips } from 'services/api'
 import {Button} from '@material-ui/core'
-import useStyles from './styles'
 import {
   Table,
   TableHead,
@@ -9,7 +7,9 @@ import {
   TableRow,
   TableCell,
 } from '@material-ui/core'
-
+import { getTrips } from 'services/api'
+import TripDialog from './components/TripModal'
+import useStyles from './styles'
 
 function useSearchResults(params) {
   const [trips, setTrips] = useState([])
@@ -25,9 +25,25 @@ function useSearchResults(params) {
     handleUpdate,
   }
 }
+function useSelectTrip() {
+  const [trip, setTrip] = useState(null)
+
+  const handleClick = trip =>
+    setTrip(trip)
+
+  const handleUnclick = () =>
+    setTrip(null)
+
+  return {
+    trip,
+    handleClick,
+    handleUnclick,
+  }
+}
 
 function SearchResult({filters}) {
   const {trips, handleUpdate} = useSearchResults(filters)
+  const {trip, handleClick, handleUnclick} = useSelectTrip(trips)
   const classes = useStyles()
 
   return (
@@ -43,20 +59,30 @@ function SearchResult({filters}) {
           <TableHeaders />
           <TableBody>
             {trips.map(t => (
-              <TripRow key={t.id} trip={t}/>
+              <TripRow
+                key={t.id}
+                trip={t}
+                onClick={handleClick}
+              />
             ))}
           </TableBody>
         </Table>
       ) : (
         <div>Haga una busqueda</div>
       )}
+      { trip &&
+        <TripDialog
+          onClose={handleUnclick}
+          trip={trip}
+        />
+      }
     </>
   )
 }
 
-function TripRow({trip}) {
+function TripRow({trip, onClick}) {
   return (
-    <TableRow>
+    <TableRow onClick={() => onClick(trip)}>
       <TableCell>{trip.bus.plate}</TableCell>
       <TableCell>{trip.start_time}</TableCell>
       <TableCell>{trip.end_time}</TableCell>
