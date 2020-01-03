@@ -13,10 +13,12 @@ async function getRoutes() {
 }
 
 async function getTrips(params) {
+  const { routeId: route_id, ...restParams } = params
+  const routeParams = route_id ? { route_id } : {} //should clean nulls instead
   const date = params.date && params.date
     .toISOString()
     .substring(0,10)
-  const result = await fetch('/trips', {...params, date})
+  const result = await fetch('/trips', {...restParams, ...routeParams, date})
 
   return result
 }
